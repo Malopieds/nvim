@@ -1,10 +1,10 @@
-vim.g.mapleader = ' '
-vim.g.maplocalleader = ' '
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
 -- [[ Setting options ]]
-require 'options'
+require("options")
 
 -- [[ Basic Keymaps ]]
-require 'keymaps'
+require("keymaps")
 
 -- [[ Install `lazy.nvim` plugin manager ]]
-require 'lazy-init'
+require("lazy-init")

@@ -12,11 +12,15 @@ return {
     'leoluz/nvim-dap-go',
     -- javascript
     'mxsdev/nvim-dap-vscode-js',
+    -- kotlin
+    -- { "Mgenuit/nvim-dap-kotlin", config = true },
     {
         "microsoft/vscode-js-debug",
         version = "1.x",
         build = "npm i && npm run compile vsDebugServerBundle && mv dist out"
     },
+    -- python
+    'mfussenegger/nvim-dap-python',
     -- java
     -- {
         -- 'mfussenegger/nvim-jdtls',
@@ -134,6 +138,10 @@ return {
             port = 5005;
         })
     end
+
+    require('dap-python').setup()
+
+    -- require('dap-kotlin').setup()
     -- require('jdtls.dap').setup_dap_main_class_configs()
     -- require("dap").configurations.java = {
     --
