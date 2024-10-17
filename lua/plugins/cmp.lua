@@ -79,6 +79,7 @@ return {
 					{ name = "nvim_lsp" },
 					{ name = "luasnip" },
 					{ name = "buffer" },
+					{ name = "vim-dadbod-completion" },
 					{
 						name = "spell",
 						option = {

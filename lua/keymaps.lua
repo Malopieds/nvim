@@ -36,6 +36,8 @@ vim.keymap.set("v", ">", ">gv", opts)
 
 vim.keymap.set("n", "]b", "<cmd>bp<CR>", opts)
 vim.keymap.set("n", "[b", "<cmd>bp<CR>", opts)
+vim.keymap.set("n", "[t", "<cmd>tabprev<CR>", opts)
+vim.keymap.set("n", "]t", "<cmd>tabnext<CR>", opts)
 -- vim.keymap.set('n', '<space>c', '<cmd>bd<CR>', opts)
 
 vim.api.nvim_create_autocmd("TextYankPost", {
