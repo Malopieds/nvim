@@ -2,7 +2,7 @@ return {
 	{
 		"Zeioth/compiler.nvim",
 		cmd = { "CompilerOpen", "CompilerToggleResults", "CompilerRedo" },
-		dependencies = { "stevearc/overseer.nvim" },
+		dependencies = { "stevearc/overseer.nvim", "nvim-telescope/telescope.nvim" },
 		opts = {},
 		config = {
 			vim.api.nvim_set_keymap("n", "<leader>cc", "<cmd>CompilerOpen<cr>", { noremap = true, silent = true }),
@@ -22,7 +22,7 @@ return {
 	},
 	{
 		"stevearc/overseer.nvim",
-		commit = "68a2d344cea4a2e11acfb5690dc8ecd1a1ec0ce0",
+		commit = "6271cab7ccc4ca840faa93f54440ffae3a3918bd",
 		cmd = { "CompilerOpen", "CompilerToggleResults", "CompilerRedo" },
 		opts = {
 			task_list = {

@@ -7,7 +7,6 @@ return {
 			"WhoIsSethDaniel/mason-tool-installer.nvim",
 
 			{ "j-hui/fidget.nvim", opts = {} },
-			-- whole java part (I just want to kms)
 			{
 				"nvim-java/nvim-java",
 				dependencies = {
@@ -76,40 +75,12 @@ return {
 					settings = {
 						java = {
 							signatureHelp = { enabled = true },
-							inlayHints = { parameterNames = { enabled = "all" } },
+							-- inlayHints = { parameterNames = { enabled = "all" } },
 						},
 					},
 				},
 				pyright = {},
 				kotlin_language_server = {},
-				tsserver = {
-					settings = {
-						typescript = {
-							inlayHints = {
-								includeInlayParameterNameHints = "all",
-								includeInlayParameterNameHintsWhenArgumentMatchesName = true,
-								includeInlayFunctionParameterTypeHints = true,
-								includeInlayVariableTypeHints = true,
-								includeInlayVariableTypeHintsWhenTypeMatchesName = true,
-								includeInlayPropertyDeclarationTypeHints = true,
-								includeInlayFunctionLikeReturnTypeHints = true,
-								includeInlayEnumMemberValueHints = true,
-							},
-						},
-						javascript = {
-							inlayHints = {
-								includeInlayParameterNameHints = "all",
-								includeInlayParameterNameHintsWhenArgumentMatchesName = true,
-								includeInlayFunctionParameterTypeHints = true,
-								includeInlayVariableTypeHints = true,
-								includeInlayVariableTypeHintsWhenTypeMatchesName = true,
-								includeInlayPropertyDeclarationTypeHints = true,
-								includeInlayFunctionLikeReturnTypeHints = true,
-								includeInlayEnumMemberValueHints = true,
-							},
-						},
-					},
-				},
 				html = {
 					settings = {
 						filetype = { "html", "tsx", "typescript" },

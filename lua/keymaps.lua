@@ -36,6 +36,11 @@ vim.keymap.set("v", ">", ">gv", opts)
 
 vim.keymap.set("n", "]b", "<cmd>bp<CR>", opts)
 vim.keymap.set("n", "[b", "<cmd>bp<CR>", opts)
+
+-- Java --
+vim.keymap.set("n", "<leader>jr", "<cmd>JavaRunnerRunMain<CR>", opts)
+vim.keymap.set("n", "<leader>jt", "<cmd>JavaRunnerToggleLogs<CR>", opts)
+
 -- vim.keymap.set('n', '<space>c', '<cmd>bd<CR>', opts)
 
 vim.api.nvim_create_autocmd("TextYankPost", {

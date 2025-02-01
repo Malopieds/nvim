@@ -1,150 +1,156 @@
 return {
-  -- NOTE: Yes, you can install new plugins here!
-  'mfussenegger/nvim-dap',
-  -- NOTE: And you can specify dependencies as well
-  dependencies = {
-    'rcarriga/nvim-dap-ui',
-    'nvim-neotest/nvim-nio',
-    'williamboman/mason.nvim',
-    'jay-babu/mason-nvim-dap.nvim',
+	{
+		"neovim/nvim-lspconfig",
+		dependencies = {
+			{ "williamboman/mason.nvim", config = true },
+			"williamboman/mason-lspconfig.nvim",
+			"WhoIsSethDaniel/mason-tool-installer.nvim",
 
-    -- Add debuggers here
-    'leoluz/nvim-dap-go',
-    -- javascript
-    'mxsdev/nvim-dap-vscode-js',
-    -- kotlin
-    -- { "Mgenuit/nvim-dap-kotlin", config = true },
-    {
-        "microsoft/vscode-js-debug",
-        version = "1.x",
-        build = "npm i && npm run compile vsDebugServerBundle && mv dist out"
-    },
-    -- python
-    'mfussenegger/nvim-dap-python',
-    -- java
-    -- {
-        -- 'mfussenegger/nvim-jdtls',
-        -- ft = { "java" },
-   -- --      config = function ()
-			-- -- local config = {
-   -- --              cmd = { vim.fn.stdpath('data') .. '/mason/bin/jdtls'},
-   -- --              root_dir = vim.fs.dirname(vim.fs.find({'gradlew', '.git', 'mvnw'}, { upward = true })[1]),
-   -- --              init_options = {
-   -- --                  bundles = { vim.fn.stdpath('data') .. vim.fn.glob('/lazy/java-debug/com.microsoft.java.debug.plugin/target/com.microsoft.java.debug.plugin-*.jar", 1') };
-   -- --              }
-			-- -- }
-   -- --          require('jdtls').setup_dap { hotcodereplace = "auto" }
-   -- --          require('jdtls.dap').setup_dap_main_class_configs()
-			-- -- require("jdtls").start_or_attach(config)
-   -- --      end
-    -- },
-    {
-        "microsoft/java-debug",
-        build = "./mvnw clean install",
-    }
-  },
-  config = function()
-    local dap = require 'dap'
-    local dapui = require 'dapui'
+			{ "j-hui/fidget.nvim", opts = {} },
+			-- whole java part (I just want to kms)
+			{
+				"nvim-java/nvim-java",
+				dependencies = {
+					"nvim-java/lua-async-await",
+					"nvim-java/nvim-java-refactor",
+					"nvim-java/nvim-java-core",
+					"nvim-java/nvim-java-test",
+					"nvim-java/nvim-java-dap",
+					"MunifTanjim/nui.nvim",
+					"neovim/nvim-lspconfig",
+					"williamboman/mason-lspconfig.nvim",
+					"mfussenegger/nvim-dap",
+					{
+						"williamboman/mason.nvim",
+						opts = {
+							registries = {
+								"github:nvim-java/mason-registry",
+								"github:mason-org/mason-registry",
+							},
+						},
+					},
+				},
+			},
+		},
+		config = function()
+			vim.api.nvim_create_autocmd("LspAttach", {
+				group = vim.api.nvim_create_augroup("kickstart-lsp-attach", { clear = true }),
+				callback = function(event)
+					local map = function(keys, func, desc)
+						vim.keymap.set("n", keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
+					end
 
-    require('mason-nvim-dap').setup {
-      automatic_installation = true,
+					map("gd", require("telescope.builtin").lsp_definitions, "[G]oto [D]efinition")
+					map("gr", require("telescope.builtin").lsp_references, "[G]oto [R]eferences")
+					map("gI", require("telescope.builtin").lsp_implementations, "[G]oto [I]mplementation")
+					map("<leader>D", require("telescope.builtin").lsp_type_definitions, "Type [D]efinition")
+					map("<leader>ds", require("telescope.builtin").lsp_document_symbols, "[D]ocument [S]ymbols")
+					map(
+						"<leader>ws",
+						require("telescope.builtin").lsp_dynamic_workspace_symbols,
+						"[W]orkspace [S]ymbols"
+					)
 
-      handlers = {},
+					map("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
+					map("<a-j>", vim.lsp.buf.code_action, "[C]ode [A]ction")
 
-      ensure_installed = {
-        'delve',
-      },
-    }
+					map("K", vim.lsp.buf.hover, "Hover Documentation")
+					map("gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
 
-    -- Basic debugging keymaps, feel free to change to your liking!
-    vim.keymap.set('n', '<F10>', dap.continue, { desc = 'Debug: Start/Continue' })
-    vim.keymap.set('n', '<F1>', dap.step_into, { desc = 'Debug: Step Into' })
-    vim.keymap.set('n', '<F2>', dap.step_over, { desc = 'Debug: Step Over' })
-    vim.keymap.set('n', '<F3>', dap.step_out, { desc = 'Debug: Step Out' })
-    vim.keymap.set('n', '<leader>b', dap.toggle_breakpoint, { desc = 'Debug: Toggle Breakpoint' })
-    vim.keymap.set('n', '<leader>B', function()
-      dap.set_breakpoint(vim.fn.input 'Breakpoint condition: ')
-    end, { desc = 'Debug: Set Breakpoint' })
+					local client = vim.lsp.get_client_by_id(event.data.client_id)
+					if client and client.server_capabilities.inlayHintProvider and vim.lsp.inlay_hint then
+						vim.lsp.inlay_hint.enable(true)
+						map("<leader>h", function()
+							vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
+						end, "[T]oggle Inlay [H]ints")
+					end
+				end,
+			})
 
-    dapui.setup {
-      icons = { expanded = '▾', collapsed = '▸', current_frame = '*' },
-      controls = {
-      },
-    }
+			local capabilities = vim.lsp.protocol.make_client_capabilities()
+			capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
 
-    vim.keymap.set('n', '<F7>', dapui.toggle, { desc = 'Debug: See last session result.' })
+			local servers = {
+				clangd = {},
+				jdtls = {
+					settings = {
+						java = {
+							signatureHelp = { enabled = true },
+							inlayHints = { parameterNames = { enabled = "all" } },
+						},
+					},
+				},
+				pyright = {},
+				kotlin_language_server = {},
+				tsserver = {
+					settings = {
+						typescript = {
+							inlayHints = {
+								includeInlayParameterNameHints = "all",
+								includeInlayParameterNameHintsWhenArgumentMatchesName = true,
+								includeInlayFunctionParameterTypeHints = true,
+								includeInlayVariableTypeHints = true,
+								includeInlayVariableTypeHintsWhenTypeMatchesName = true,
+								includeInlayPropertyDeclarationTypeHints = true,
+								includeInlayFunctionLikeReturnTypeHints = true,
+								includeInlayEnumMemberValueHints = true,
+							},
+						},
+						javascript = {
+							inlayHints = {
+								includeInlayParameterNameHints = "all",
+								includeInlayParameterNameHintsWhenArgumentMatchesName = true,
+								includeInlayFunctionParameterTypeHints = true,
+								includeInlayVariableTypeHints = true,
+								includeInlayVariableTypeHintsWhenTypeMatchesName = true,
+								includeInlayPropertyDeclarationTypeHints = true,
+								includeInlayFunctionLikeReturnTypeHints = true,
+								includeInlayEnumMemberValueHints = true,
+							},
+						},
+					},
+				},
+				html = {
+					settings = {
+						filetype = { "html", "tsx", "typescript" },
+					},
+				},
+				tailwindcss = {},
+				eslint = {},
+				lua_ls = {
+					settings = {
+						Lua = {
+							completion = {
+								callSnippet = "Replace",
+							},
+							hint = {
+								enable = true,
+								arrayIndex = "Disable",
+							},
+						},
+					},
+				},
+			}
 
-    dap.listeners.after.event_initialized['dapui_config'] = dapui.open
-    dap.listeners.before.event_terminated['dapui_config'] = dapui.close
-    dap.listeners.before.event_exited['dapui_config'] = dapui.close
+			require("mason").setup()
+			require("java").setup({})
+			require("lspconfig").jdtls.setup({})
 
-    require('dap-go').setup {
-      delve = {
-        detached = vim.fn.has 'win32' == 0,
-      },
-    }
+			local ensure_installed = vim.tbl_keys(servers or {})
+			vim.list_extend(ensure_installed, {
+				"stylua", -- Used to format Lua code
+			})
+			require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 
-    require("dap-vscode-js").setup({
-      -- node_path = "node", -- Path of node executable. Defaults to $NODE_PATH, and then "node"
-      debugger_path = vim.fn.stdpath('data') .. "/lazy/vscode-js-debug", -- Path to vscode-js-debug installation.
-      -- debugger_cmd = { "extension" }, -- Command to use to launch the debug server. Takes precedence over `node_path` and `debugger_path`.
-      adapters = { 'chrome', 'pwa-node', 'pwa-chrome', 'pwa-msedge', 'node-terminal', 'pwa-extensionHost', 'node', 'chrome' }, -- which adapters to register in nvim-dap
-      -- log_file_path = "(stdpath cache)/dap_vscode_js.log" -- Path for file logging
-      -- log_file_level = false -- Logging level for output to file. Set to false to disable file logging.
-      -- log_console_level = vim.log.levels.ERROR -- Logging level for output to console. Set to false to disable console output.
-    })
-    local js_based_languages = { "typescript", "javascript", "typescriptreact" }
-
-    for _, language in ipairs(js_based_languages) do
-      require("dap").configurations[language] = {
-        {
-          type = "pwa-node",
-          request = "launch",
-          name = "Launch file",
-          program = "${file}",
-          cwd = "${workspaceFolder}",
-        },
-        {
-          type = "pwa-node",
-          request = "attach",
-          name = "Attach",
-          processId = require 'dap.utils'.pick_process,
-          cwd = "${workspaceFolder}",
-        },
-        {
-          type = "pwa-chrome",
-          request = "launch",
-          name = "Start Chrome with \"localhost\"",
-          url = "http://localhost:3000",
-          webRoot = "${workspaceFolder}",
-          userDataDir = "${workspaceFolder}/.vscode/vscode-chrome-debug-userdatadir"
-        }
-      }
-    end
-    -- local config = {
-    --     cmd = { vim.fn.stdpath('data') .. '/mason/bin/jdtls'},
-    --     root_dir = vim.fs.dirname(vim.fs.find({'gradlew', '.git', 'mvnw'}, { upward = true })[1]),
-        -- init_options = {
-        --     bundles = { vim.fn.stdpath('data') .. vim.fn.glob('/lazy/java-debug/com.microsoft.java.debug.plugin/target/com.microsoft.java.debug.plugin-*.jar", 1') };
-        -- }
-    -- }
-    -- require('jdtls').start_or_attach(config)
-
-    dap.adapters.java = function(callback)
-        callback({
-            type = 'server';
-            host = '127.0.0.1';
-            port = 5005;
-        })
-    end
-
-    require('dap-python').setup()
-
-    -- require('dap-kotlin').setup()
-    -- require('jdtls.dap').setup_dap_main_class_configs()
-    -- require("dap").configurations.java = {
-    --
-    -- }
-  end,
+			require("mason-lspconfig").setup({
+				handlers = {
+					function(server_name)
+						local server = servers[server_name] or {}
+						server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
+						require("lspconfig")[server_name].setup(server)
+					end,
+				},
+			})
+		end,
+	},
 }
