@@ -35,5 +35,5 @@ vim.opt.scrolloff = 10 -- minimal number of screen lines to keep above and below
 vim.opt.conceallevel = 2
 
 -- spelling
-vim.opt.spell = true
+vim.opt.spell = false
 vim.opt.spelllang = { "en_us", "fr" }

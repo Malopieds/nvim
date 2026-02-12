@@ -76,6 +76,7 @@ return {
 					end, { "i", "s" }),
 				}),
 				sources = {
+					{ name = "vim-dadbod-completion", priority = 1000 },
 					{ name = "nvim_lsp" },
 					{ name = "luasnip" },
 					{ name = "buffer" },

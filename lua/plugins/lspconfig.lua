@@ -101,10 +101,11 @@ return {
 						},
 					},
 				},
+				terraformls = {},
 			}
 
 			require("mason").setup()
-			require("java").setup({})
+			-- require("java").setup()
 			require("lspconfig").jdtls.setup({})
 
 			local ensure_installed = vim.tbl_keys(servers or {})
