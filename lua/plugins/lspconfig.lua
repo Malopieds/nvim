@@ -31,6 +31,10 @@ return {
 				},
 			},
 		},
+		inlay_hints = {
+			enabled = true,
+		},
+
 		config = function()
 			vim.api.nvim_create_autocmd("LspAttach", {
 				group = vim.api.nvim_create_augroup("kickstart-lsp-attach", { clear = true }),
@@ -75,15 +79,45 @@ return {
 					settings = {
 						java = {
 							signatureHelp = { enabled = true },
-							-- inlayHints = { parameterNames = { enabled = "all" } },
+							inlayHints = { parameterNames = { enabled = "all" } },
 						},
 					},
 				},
+				angularls = {},
 				pyright = {},
 				kotlin_language_server = {},
 				html = {
 					settings = {
 						filetype = { "html", "tsx", "typescript" },
+					},
+				},
+				tsserver = {
+					settings = {
+						typescript = {
+							inlayHints = {
+								includeInlayParameterNameHints = "all", -- 'none' | 'literals' | 'all'
+								includeInlayParameterNameHintsWhenArgumentMatchesName = true,
+								includeInlayVariableTypeHints = true,
+								includeInlayFunctionParameterTypeHints = true,
+								includeInlayVariableTypeHintsWhenTypeMatchesName = true,
+								includeInlayPropertyDeclarationTypeHints = true,
+								includeInlayFunctionLikeReturnTypeHints = true,
+								includeInlayEnumMemberValueHints = true,
+							},
+						},
+						javascript = {
+							inlayHints = {
+								includeInlayParameterNameHints = "all", -- 'none' | 'literals' | 'all'
+								includeInlayParameterNameHintsWhenArgumentMatchesName = true,
+								includeInlayVariableTypeHints = true,
+
+								includeInlayFunctionParameterTypeHints = true,
+								includeInlayVariableTypeHintsWhenTypeMatchesName = true,
+								includeInlayPropertyDeclarationTypeHints = true,
+								includeInlayFunctionLikeReturnTypeHints = true,
+								includeInlayEnumMemberValueHints = true,
+							},
+						},
 					},
 				},
 				tailwindcss = {},
